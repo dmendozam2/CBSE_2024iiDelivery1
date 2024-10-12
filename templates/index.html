@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ISBN</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        // Function to render data into the #data-container div
+        function renderData(data) {
+        const container = document.getElementById('data-container');
+
+        // Clear any existing content in the container
+        container.innerHTML = '';
+
+        // Iterate over the fetched data and create HTML elements to display it
+        data.forEach(task => {
+            const userDiv = document.createElement('div');
+            userDiv.classList.add('task');  // Optional: add class for styling
+
+            // Create HTML content for each user
+            userDiv.innerHTML = `
+            <h3><strong>Nombre:</strong>${task.name}</h3>
+            <p><strong>Descripción:</strong> ${task.description}</p>
+            `;
+
+            // Append the userDiv to the container
+            container.appendChild(userDiv);
+        });
+        }
+        let tasksResponse = fetch("/tasks");
+        tasksResponse.then(response => {
+            if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();  // Parse JSON response into native JavaScript objects
+        })
+        .then(data => {
+            tasks = data;  // Use the data here
+            renderData(tasks)
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+
+    </script>
+</head>
+<body>
+    <h1>Tarea</h1>
+    <form method="POST" action="/tasks">
+        <label for="name">Nombre:</label><br>
+        <input type="text" id="name" name="name" required><br>
+        <label for="description">Descripción:</label><br>
+        <textarea id="description" name="description"></textarea><br>
+        <button type="submit">Crear</button>
+    </form>
+    <h1>Lista de tareas</h1>
+    <div id="data-container"></div>
+</body>
+</html>
